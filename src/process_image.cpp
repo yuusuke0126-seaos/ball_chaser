@@ -38,19 +38,23 @@ void process_image_callback(const sensor_msgs::Image img)
       if (white_pos/white_count < img.width/3)
       {
         // send turn left srv
+        ROS_INFO("Turn left - position: %d, count: %d", white_pos/white_count, white_count);
       }
       else if (white_pos/white_count < img.width/3*2)
       {
         // send go straight srv
+        ROS_INFO("Go straight - position: %d, count: %d", white_pos/white_count, white_count);
       }
       else
       {
         // send turn right srv
+        ROS_INFO("Turn right - position: %d, count: %d", white_pos/white_count, white_count);
       }
     }
     else
     {
       // send stop srv
+      ROS_INFO("No white_ball, stop");
     }
     
     // TODO: Loop through each pixel in the image and check if there's a bright white one

@@ -10,6 +10,12 @@ ros::ServiceClient client;
 void drive_robot(float lin_x, float ang_z)
 {
     // TODO: Request a service and pass the velocities to it to drive the robot
+    ball_chaser::DriveToTarget srv;
+    srv.request.linear_x = lin_x;
+    srv.request.angular_z = ang_z;
+    // Call the safe_move service and pass the requested joint angles
+    if (!client.call(srv))
+        ROS_ERROR("Failed to call service safe_move");
 }
 
 // This callback function continuously executes and reads the image data
@@ -39,22 +45,26 @@ void process_image_callback(const sensor_msgs::Image img)
       {
         // send turn left srv
         ROS_INFO("Turn left - position: %d, count: %d", white_pos/white_count, white_count);
+        drive_robot(0.1, 0.2);
       }
       else if (white_pos/white_count < img.width/3*2)
       {
         // send go straight srv
         ROS_INFO("Go straight - position: %d, count: %d", white_pos/white_count, white_count);
+        drive_robot(0.125, 0.0);
       }
       else
       {
         // send turn right srv
         ROS_INFO("Turn right - position: %d, count: %d", white_pos/white_count, white_count);
+        drive_robot(0.1, -0.2);
       }
     }
     else
     {
       // send stop srv
       ROS_INFO("No white_ball, stop");
+      drive_robot(0.0, 0.0);
     }
     
     // TODO: Loop through each pixel in the image and check if there's a bright white one

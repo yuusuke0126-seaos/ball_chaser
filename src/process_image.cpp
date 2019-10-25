@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "ball_chaser/DriveToTarget.h"
 #include <sensor_msgs/Image.h>
+#include <numeric>
 
 // Define a global client that can request services
 ros::ServiceClient client;
@@ -16,7 +17,42 @@ void process_image_callback(const sensor_msgs::Image img)
 {
 
     int white_pixel = 255;
+    
+    int white_pos = 0;
+    int white_count = 0;
 
+    for (int i = 0; i < img.height; i++)
+    {
+      for (int j = 0; j < img.width; j++)
+      {
+        if ((img.data[(i*img.width+j)*3]==white_pixel) && (img.data[(i*img.width+j)*3+1]==white_pixel) && (img.data[(i*img.width+j)*3+2]==white_pixel))
+        {
+          white_pos += j;
+          white_count++;
+        }
+      }
+    }
+
+    if (white_count > 0)
+    {
+      if (white_pos/white_count < img.width/3)
+      {
+        // send turn left srv
+      }
+      else if (white_pos/white_count < img.width/3*2)
+      {
+        // send go straight srv
+      }
+      else
+      {
+        // send turn right srv
+      }
+    }
+    else
+    {
+      // send stop srv
+    }
+    
     // TODO: Loop through each pixel in the image and check if there's a bright white one
     // Then, identify if this pixel falls in the left, mid, or right side of the image
     // Depending on the white ball position, call the drive_bot function and pass velocities to it

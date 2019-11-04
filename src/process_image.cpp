@@ -57,15 +57,22 @@ void process_image_callback(const sensor_msgs::Image img)
       float ball_pos_x = (float) ball_r*img.width/(2.0*tan(FOV/2.0)*sqrt((float)white_count/M_PI));
       float ball_pos_y = -((float) white_pos/white_count/img.width*2.0-1.0) * ball_pos_x * tan(FOV/2.0);
       float ball_ang_z = atan2(ball_pos_y, ball_pos_x);
-      ROS_INFO("x_pos: %1.2f, y_pos: %1.2f", ball_pos_x, ball_pos_y);
-      lin_x = - kp * (target_distance - ball_pos_x);
+      // ROS_INFO("x_pos: %1.2f, ang_z: %1.2f", ball_pos_x, ball_ang_z);
+      lin_x = - kp * (target_distance - ball_pos_x) * (1.0 - pow((float) white_pos/white_count/img.width*2.0-1.0, 2.0));
       ang_z = - 5 * kp * (0.0 - ball_ang_z);
 
-      // TODO: Add lin_x limitation according to pos_y
+      if (abs(lin_x) > max_lin_x)
+      {
+        lin_x = lin_x * max_lin_x / abs(lin_x);
+      }
+      if (abs(ang_z) > max_ang_z)
+      {
+        ang_z = ang_z * max_ang_z / abs(ang_z);
+      }
 
     }
     
-    ROS_INFO("lin_x: %1.2f, ang_z: %1.2f", lin_x, ang_z);
+    // ROS_INFO("lin_x: %1.2f, ang_z: %1.2f", lin_x, ang_z);
     drive_robot(lin_x, ang_z);
     
 }

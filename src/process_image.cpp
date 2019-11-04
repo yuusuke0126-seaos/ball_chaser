@@ -59,39 +59,14 @@ void process_image_callback(const sensor_msgs::Image img)
       float ball_ang_z = atan2(ball_pos_y, ball_pos_x);
       ROS_INFO("x_pos: %1.2f, y_pos: %1.2f", ball_pos_x, ball_pos_y);
       lin_x = - kp * (target_distance - ball_pos_x);
-      ang_z = - kp * (0.0 - ball_ang_z);
+      ang_z = - 5 * kp * (0.0 - ball_ang_z);
+
+      // TODO: Add lin_x limitation according to pos_y
+
     }
     
     ROS_INFO("lin_x: %1.2f, ang_z: %1.2f", lin_x, ang_z);
     drive_robot(lin_x, ang_z);
-
-    // if (white_count > 0)
-    // {
-    //   if (white_pos/white_count < img.width/3)
-    //   {
-    //     // send turn left srv
-    //     // ROS_INFO("Turn left - position: %d, count: %d", white_pos/white_count, white_count);
-    //     drive_robot(0.1, 0.2);
-    //   }
-    //   else if (white_pos/white_count < img.width/3*2)
-    //   {
-    //     // send go straight srv
-    //     // ROS_INFO("Go straight - position: %d, count: %d", white_pos/white_count, white_count);
-    //     drive_robot(0.125, 0.0);
-    //   }
-    //   else
-    //   {
-    //     // send turn right srv
-    //     // ROS_INFO("Turn right - position: %d, count: %d", white_pos/white_count, white_count);
-    //     drive_robot(0.1, -0.2);
-    //   }
-    // }
-    // else
-    // {
-    //   // send stop srv
-    //   ROS_INFO("No white_ball, stop");
-    //   drive_robot(0.0, 0.0);
-    // }
     
 }
 
